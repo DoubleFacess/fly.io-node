@@ -19,7 +19,7 @@ Model._test = (app, result) => {
             result(null, res.rows)
         })
         .catch((err) => {
-            console.error('Error during SELECT from contatti_main', err)
+            console.error('Error during SELECT from test', err)
             result(err, null)
         })
         .finally(() => db.end())
