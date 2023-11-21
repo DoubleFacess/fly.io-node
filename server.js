@@ -1,63 +1,35 @@
 const express = require('express')
 const cors = require("cors")
 const fs = require('node:fs')
+const { Client } = require('pg')
+const dbConfig = require('./app/config/db.config.js')
 
-// set up express web server
-const app = express()
+const client = new Client({ // Crea un cliente PostgreSQL
+  connectionString: dbConfig.DATABASE_URL,
+})
 
+const app = express() // set up express web server
+
+app.use(express.json()) // parse requests of content-type - application/json /* bodyParser.json() is deprecated */
+
+app.use(express.urlencoded({ extended: true })) // parse requests of content-type - application/x-www-form-urlencoded /* bodyParser.urlencoded() is deprecated */
+
+require("./app/routes/routes.js")(app)
+
+/*
 var corsOptions = {
   origin: "http://localhost:3000"
 }
-
 app.use(cors(corsOptions))
-// parse requests of content-type - application/json
-app.use(express.json()) /* bodyParser.json() is deprecated */
+*/
 
-// parse requests of content-type - application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true })) /* bodyParser.urlencoded() is deprecated */
-
-// simple route
-app.get("/", (req, res) => {
+app.get("/", (req, res) => { // simple route || welcome message
   res.json({ message: "Welcome to enzonav application." })
 })
-//require("./app/routes/_app.routes.js")(app)
 
-
-
-
-// @@ Main page * old code to serve html page with access counter @@ */
-// set up static content
-app.use(express.static('public'))
+app.use(express.static('public')) 
 // last known count
-let count = 0
-app.get('/test', async(_request, response) => {
-  // increment counter in counter.txt file
-  try {
-    count = parseInt(fs.readFileSync('counter.txt', 'utf-8')) + 1
-  } catch {
-    count = 1
-  }
-  fs.writeFileSync('counter.txt', count.toString())
 
-  // render HTML response
-  try {
-    const content = fs.readFileSync('views/index.tmpl', 'utf-8')
-      .replace('@@COUNT@@', count.toString())
-    response.set('Content-Type', 'text/html')
-    response.send(content)
-  } catch (error) {
-    response.send()
-  }
-})
-/* @@ end of code @@ */
-
-
-
-
-// Start web server on port 3000
-app.listen(3000, () => {
-  console.log('Server is listening on port 3000')
-})
 // set port, listen for requests
 const PORT = process.env.PORT || 3002
 app.listen(PORT, () => {
