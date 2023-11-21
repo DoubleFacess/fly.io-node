@@ -4,6 +4,9 @@ const fs = require('node:fs')
 const { Client } = require('pg')
 const dbConfig = require('./app/config/db.config.js')
 
+
+
+
 const client = new Client({ // Crea un cliente PostgreSQL
   connectionString: dbConfig.DATABASE_URL,
 })
@@ -27,11 +30,8 @@ app.get("/", (req, res) => { // simple route || welcome message
   res.json({ message: "Welcome to enzonav application." })
 })
 
-app.use(express.static('public')) 
-// last known count
-
 // set port, listen for requests
-const PORT = process.env.PORT || 3002
+const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`)
 })
